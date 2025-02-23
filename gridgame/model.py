@@ -9,6 +9,12 @@ class GridGameModel:
             raise ValueError(
                 f'Must have at least two players (found {player_count})')
 
+        unique_symbols = set(player_symbols)
+
+        if len(unique_symbols) != len(player_symbols):
+            raise ValueError(
+                f'Player symbols must be unique (was {player_symbols}')
+
         if len(player_symbols) != player_count:
             raise ValueError(
                 f'Player symbols must be exactly {player_count} (was {player_symbols})')
@@ -112,12 +118,11 @@ class GridGameModel:
         )
 
     def place_symbol(self, symbol: Symbol, cell: Cell) -> Feedback:
-        if symbol not in self.get_symbol_choices(self.current_player):
-            raise ValueError(f'{symbol} not valid choice for Player {self.current_player}; '
-                             f'valid choices are {self.get_symbol_choices(self.current_player)}')
-
         if self.is_game_over:
             return Feedback.GAME_OVER
+
+        if symbol not in self.get_symbol_choices(self.current_player):
+            return Feedback.INVALID_SYMBOL
 
         if not self.is_within_bounds(cell):
             return Feedback.OUT_OF_BOUNDS

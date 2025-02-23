@@ -18,4 +18,5 @@ class Feedback(Enum):
     VALID = auto()
     OUT_OF_BOUNDS = auto()
     OCCUPIED = auto()
+    INVALID_SYMBOL = auto()
     GAME_OVER = auto()
