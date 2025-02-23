@@ -1,0 +1,9 @@
+[project]
+name = "lab05-practice"
+version = "0.1.0"
+description = "Add your name here"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
