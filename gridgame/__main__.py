@@ -18,7 +18,7 @@ def setup_parser():
         choices=["tictactoe", "notakto", "wild", "pick15"],
         required=True,
     )
-    parser.add_argument('-s', '--symbols', type=str_list, required=True)
+    parser.add_argument('-s', '--symbols', type=str_list, default=[])
 
     return parser
 

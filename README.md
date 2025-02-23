@@ -32,7 +32,7 @@ python3 -m gridgame -n 3 -p 2 --variant tictactoe --symbols X,O
 
 The given model code in `model.py` is an implementation of _Tic-Tac-Toe_.
 
-Refactor the given code and extend it with support for the _Notakto_, _Wild Tic-Tac-Toe_, and _Pick15_ game variants while retaining support for _Tic-Tac-Toe_.
+Refactor the given code and extend it with support for the _Wild Tic-Tac-Toe_, _Notakto_, and _Pick15_ game variants while retaining support for _Tic-Tac-Toe_.
 
 Note that the given view and controller are already set up to accommodate the variants–you only have to refactor `model.py`.
 
@@ -62,5 +62,5 @@ You may test your work manually via the following:
 python3 -m gridgame -n 3 -p 2 --variant tictactoe --symbols X,O
 python3 -m gridgame -n 3 -p 2 --variant wild --symbols X,O
 python3 -m gridgame -n 3 -p 3 --variant notakto --symbols X
-python3 -m gridgame -n 3 -p 2 --variant pick15 --symbols 1,2,3,4,5,6,7,8,9
+python3 -m gridgame -n 3 -p 2 --variant pick15
 ```
