@@ -32,11 +32,11 @@ def make_model(args: argparse.Namespace):
                 player_symbols=args.symbols,
             )
 
-        case "notakto":
-            raise NotImplementedError('notakto variant is not yet implemented')
-
         case "wild":
             raise NotImplementedError('wild variant is not yet implemented')
+
+        case "notakto":
+            raise NotImplementedError('notakto variant is not yet implemented')
 
         case "pick15":
             raise NotImplementedError('pick15 variant is not yet implemented')
