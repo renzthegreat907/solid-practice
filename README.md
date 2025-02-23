@@ -43,23 +43,34 @@ Refactor `GridGameModel` in such a way that:
 - Externalizes the win condition logic
 - Externalizes the management of valid symbols to be played
 
-It may also help to create a common interface for the objects representing the externalized logic.
+You will likely need to create a common interface for the objects representing the externalized logic–subtype polymorphism is the key to creating OCP-compliant code.
+
+Upon doing so, create a class that implements the newly created interface. This class should reflect the mechanics of Tic-Tac-Toe.
+
+Then, modify the `tictactoe` case in `make_model` of `gridgame/__main__.py` by instantiating the newly created class and using it when initializing `GridGameModel`–this should create a `GridGameModel` object that simulates Tic-Tac-Toe.
 
 Ensure that broken unit tests are fixed so that 100% code coverage is retained for the model.
 
+You may test your work manually via the following command:
+
+```bash
+python3 -m gridgame -n 3 -p 2 --variant tictactoe --symbols X,O
+```
+
 ### Subtask #2: Adding of new variants without editing existing code
 
-Using your common interface, create implementing classes for each Tic-Tac-Toe variant _(as well as for Tic-Tac-Toe itself)_.
+As you have done for the `tictactoe` case, do the same for all the other variants.
 
 Ensure that:
 
 1. Your code in Subtask #1 is not modified in any way _(i.e., it is OCP-compliant relative to the game variants being introduced)_
 1. Your added code has 100% code coverage
+1. `notakto` raises an exception if more than one symbol is supplied
+1. `pick15` raises an exception if any symbol is supplied
 
-You may test your work manually via the following:
+You may test your work manually via the following commands:
 
 ```bash
-python3 -m gridgame -n 3 -p 2 --variant tictactoe --symbols X,O
 python3 -m gridgame -n 3 -p 2 --variant wild --symbols X,O
 python3 -m gridgame -n 3 -p 3 --variant notakto --symbols X
 python3 -m gridgame -n 3 -p 2 --variant pick15
