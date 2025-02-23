@@ -14,14 +14,12 @@ class Controller:
 
         while not model.is_game_over:
             while True:
-                view.print_board(
-                    model.grid_size,
-                    model.occupied_cells,
-                )
-
+                view.print_board(model.grid_size, model.occupied_cells)
                 view.print_current_player(model.current_player)
 
                 choices = model.get_symbol_choices(model.current_player)
+                assert len(choices) > 0
+
                 symbol = (
                     view.ask_for_symbol_choice(choices) if len(choices) > 1 else
                     choices[0]
