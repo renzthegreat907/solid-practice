@@ -2,56 +2,41 @@
 
 ## Overview
 
-_Notakto_, _Wild Tic-tac-toe_, and _Pick15_ are games very similar to _Tic-tac-toe_–they are played on a 2D grid with players taking turns placing symbols, but they introduce variations in certain aspects of the game mechanics of Tic-tac-toe.
+_Notakto_, _Wild Tic-Tac-Toe_, and _Pick15_ are games very similar to _Tic-Tac-Toe_–they are played on a 2D grid with two or more players taking turns placing symbols, but have variations in certain game mechanics that make them distinct.
+
+### Wild Tic-Tac-Toe
+
+_Wild Tic-Tac-Toe_ is a variant of Tic-Tac-Toe where players can _choose which symbol to play_ for their turn. If the player forms a complete row, column, or main diagonal with any symbol, they are considered to be the winner.
 
 ### Notakto
 
-_Notakto_ is Tic-tac-toe, but with only one symbol shared by all players. The player who forms a complete row, column, or main diagonal _loses_.
+_Notakto_ is Tic-Tac-Toe, but with only _one symbol_ shared by all players. The player who forms a complete row, column, or main diagonal _loses_.
 
-To keep the rules simple for multiple players, we will take the winner to be the player who took placed a symbol right before a loser is first determined.
-
-### Wild Tic-tac-toe
-
-_Wild Tic-tac-toe_ is a variant of Tic-tac-toe where players can choose which symbol to play for their turn. If the player forms a complete row, column, or main diagonal with any symbol, they are considered to be the winner.
+To keep the rules simple for multiple players, we will take the winner to be the player who took placed a symbol _right before_ a loser is first determined.
 
 ### Pick15
 
-_Pick15_ is Tic-tac-toe played with the numbers `1` to `9` _(for a $3 \times 3$ grid)_. Each number can be played by any player, but only once. The first player who is able to form a complete row, column, or diagonal summing up to `15` _(for a $3 \times 3$ grid)_ is the winner.
+_Pick15_ is Tic-Tac-Toe played with the numbers `1` to `9` _(for a $`3 \times 3`$ grid)_. Each number can be played by any player, but only once. The first player who is able to form a complete row, column, or diagonal summing up to `15` _(for a $`3 \times 3`$ grid)_ is the winner, regardless of who played the other numbers in the winning sequence.
 
-For an $n \times n$ grid, numbers that be played are `1` to $n^2$ with the goal of having a complete row, column or diagonal summing up to $\frac{n(n^2 + 1)}{2}$.
+For an $n \times n$ grid, numbers that be played are `1` to $n^2$ with the goal of having a complete row, column or diagonal summing up to $\displaystyle \frac{n(n^2 + 1)}{2}$.
 
 ## Task
 
-The given model code in `model.py` is an implementation of _Tic-tac-toe_.
+The repository contains a complete MVC-based implementation of Tic-Tac-Toe. Command line arguments are used to specify parameters of the game.
 
-Refactor the given code and extend it with support for the _Notakto_, _Wild Tic-tac-toe_, and _Pick15_ game variants while retaining support for _Tic-tac-toe_.
-
-### Subtask #1: Defining the `View`
-
-Create `gridgame/view.py` and a `View` class for the existing model in `model.py` that could accommodate all the Tic-tac-toe variants listed above.
-
-Ensure that the view can accommodate the following:
-
-- Showing of which symbols the player can choose _(if the variant normally gives the player a choice)_
-- Repeatedly asking the current player which symbol to play until a valid symbol is entered _(if applicable)_
-
-### Subtask #2: Defining the `Controller`
-
-Create `gridgame/controller.py` and a `Controller` class compatible with `View` and `GridGameModel`
-
-Ensure that the controller:
-
-- Takes in `GridGameModel` object as the first argument of its initializer
-- Takes in a `View` object as the second argument of its initializer
-- Has a method called `start_game() -> None` which serves as the entrypoint of the game
-
-If done correctly, `gridgame/__main__.py` should not have Pyright errors and that the following command will start running the Tic-tac-toe game with a $3 \times 3$ grid:
+The following command starts a game of two-player Tic-Tac-Toe on a $3 \times 3$ grid with `X` and `O` as symbols for Players 1 and 2 respectively:
 
 ```bash
-python3 -m gridgame -n 3 --variant tictactoe
+python3 -m gridgame -n 3 -p 2 --variant tictactoe --symbols X,O
 ```
 
-### Subtask #3: Refactoring for OCP compliance
+The given model code in `model.py` is an implementation of _Tic-Tac-Toe_.
+
+Refactor the given code and extend it with support for the _Notakto_, _Wild Tic-Tac-Toe_, and _Pick15_ game variants while retaining support for _Tic-Tac-Toe_.
+
+Note that the given view and controller are already set up to accommodate the variants–you only have to refactor `model.py`.
+
+### Subtask #1: Refactoring for OCP compliance
 
 Refactor `GridGameModel` in such a way that:
 
@@ -62,9 +47,9 @@ It may also help to create a common interface for the objects representing the e
 
 Ensure that broken unit tests are fixed so that 100% code coverage is retained for the model.
 
-### Subtask #4: Adding of new variants without editing existing code
+### Subtask #2: Adding of new variants without editing existing code
 
-Using your common interface, create implementing classes for each Tic-tac-toe variant _(as well as for Tic-tac-toe itself)_.
+Using your common interface, create implementing classes for each Tic-Tac-Toe variant _(as well as for Tic-Tac-Toe itself)_.
 
 Ensure that:
 
@@ -74,8 +59,8 @@ Ensure that:
 You may test your work manually via the following:
 
 ```bash
-python3 -m gridgame -n 3 --variant tictactoe
-python3 -m gridgame -n 3 --variant notakto
-python3 -m gridgame -n 3 --variant wild
-python3 -m gridgame -n 3 --variant pick15
+python3 -m gridgame -n 3 -p 2 --variant tictactoe --symbols X,O
+python3 -m gridgame -n 3 -p 2 --variant wild --symbols X,O
+python3 -m gridgame -n 3 -p 3 --variant notakto --symbols X
+python3 -m gridgame -n 3 -p 2 --variant pick15 --symbols 1,2,3,4,5,6,7,8,9
 ```
