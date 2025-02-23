@@ -61,6 +61,8 @@ class View:
     def print_error_game_over(self) -> None:
         print('Invalid input; game is already over.')
 
+    def print_error_invalid_symbol(self) -> None:
+        print('Invalid symbol. Please try again.')
+
     def print_winner(self, winner: PlayerId) -> None:
         print(f'Player {winner} wins!')
-    ...

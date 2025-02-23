@@ -42,6 +42,9 @@ class Controller:
                     case Feedback.GAME_OVER:
                         view.print_error_game_over()
 
+                    case Feedback.INVALID_SYMBOL:
+                        view.print_error_invalid_symbol()
+
                 view.print_divider()
 
         assert model.winner is not None
