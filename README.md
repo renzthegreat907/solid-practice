@@ -12,7 +12,7 @@ _Wild Tic-Tac-Toe_ is a variant of Tic-Tac-Toe where players can _choose which s
 
 _Notakto_ is Tic-Tac-Toe, but with only _one symbol_ shared by all players. The player who forms a complete row, column, or main diagonal _loses_.
 
-To keep the rules simple for multiple players, we will take the winner to be the player who took placed a symbol _right before_ a loser is first determined.
+To keep the rules simple for multiple players, we will take the winner to be the player who last placed a symbol when a loser is first determined.
 
 ### Pick15
 
