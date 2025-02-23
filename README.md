@@ -53,7 +53,7 @@ Using your common interface, create implementing classes for each Tic-Tac-Toe va
 
 Ensure that:
 
-1. Your code in Subtask #3 is not modified in any way _(i.e., it is OCP-compliant relative to the game variants being introduced)_
+1. Your code in Subtask #1 is not modified in any way _(i.e., it is OCP-compliant relative to the game variants being introduced)_
 1. Your added code has 100% code coverage
 
 You may test your work manually via the following:
