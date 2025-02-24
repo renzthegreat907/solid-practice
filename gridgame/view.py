@@ -66,3 +66,6 @@ class View:
 
     def print_winner(self, winner: PlayerId) -> None:
         print(f'Player {winner} wins!')
+
+    def print_draw(self) -> None:
+        print('Draw.')
