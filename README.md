@@ -49,6 +49,8 @@ Upon doing so, create a class that implements the newly created interface. This 
 
 Then, modify the `tictactoe` case in `make_model` of `gridgame/__main__.py` by instantiating the newly created class and using it when initializing `GridGameModel`–this should create a `GridGameModel` object that simulates Tic-Tac-Toe.
 
+__You are expected to modify `GameModel` itself. You are free to modify even its constructor if needed.__
+
 Ensure that broken unit tests are fixed so that 100% code coverage is retained for the model.
 
 You may test your work manually via the following command:
