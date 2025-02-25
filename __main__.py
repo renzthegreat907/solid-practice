@@ -5,7 +5,10 @@ from .controller import Controller
 
 from .model import (
     GridGameModel,
-    TicTacToeSettingInitializer,
+    )
+
+from .tictactoe import (
+    TicTacToeGamemode,
     TicTacToeSymbolHandler,
     TicTacToeWinChecker,
     )
@@ -36,21 +39,16 @@ def make_model(args: argparse.Namespace):
 
     match args.variant:
         case "tictactoe":
-            # return TicTacToeModel(
-            #     grid_size=args.size,
-            #     player_count=args.player_count,
-            #     player_symbols=args.symbols,
-            # )
 
             symbol_handler = TicTacToeSymbolHandler(player_symbols, player_count)
             win_checker = TicTacToeWinChecker(symbol_handler)
-            setting_initializer = TicTacToeSettingInitializer(win_checker)
-
-        case "wild":
-            raise NotImplementedError('wild variant is not yet implemented')
+            gamemode = TicTacToeGamemode(win_checker)
 
         case "notakto":
             raise NotImplementedError('notakto variant is not yet implemented')
+
+        case "wild":
+            raise NotImplementedError('wild variant is not yet implemented')
 
         case "pick15":
             raise NotImplementedError('pick15 variant is not yet implemented')
@@ -62,7 +60,7 @@ def make_model(args: argparse.Namespace):
         size,
         player_symbols,
         player_count,
-        setting_initializer)
+        gamemode)
 
 
 def main():
