@@ -33,14 +33,18 @@ class TicTacToeSymbolHandler(GridGameSymbolHandler):
             for k, symbol in self._player_to_symbol.items()
         }
 
-    def _validate_player_symbols(self,
-        player_symbols: Sequence[Symbol],
-        player_count: int
+    def _validate_player_count(self,
         ) -> None:
 
         if player_count <= 1:
-            raise ValueError(
-                f'Must have at least two players (found {player_count})')
+        raise ValueError(
+            f'Must have at least two players (found {player_count})')
+
+    def _validate_player_symbols(self,
+        ) -> None:
+
+        player_symbols: Sequence[Symbol] = self._player_symbols
+        player_count: int = self._player_count
 
         unique_symbols = set(player_symbols)
 
