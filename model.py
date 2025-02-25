@@ -24,6 +24,11 @@ class GridGameSymbolHandler(ABC):
         self._player_to_symbol = NotImplemented
 
     @abstractmethod
+    def _validate_player_count(self
+        ) -> None:
+        raise NotImplementedError
+    
+    @abstractmethod
     def _validate_player_symbols(self
         ) -> None:
         raise NotImplementedError
