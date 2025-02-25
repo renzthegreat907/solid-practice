@@ -24,7 +24,7 @@ class GridGameSymbolHandler(ABC):
         self._player_to_symbol = NotImplemented
 
     @abstractmethod
-    def validate_player_symbols(self
+    def _validate_player_symbols(self
         ) -> None:
         raise NotImplementedError
 
