@@ -18,13 +18,13 @@ class GridGameSymbolHandler(ABC):
 
     @abstractmethod
     def __init__(self) -> None:
+        self._player_symbols = NotImplemented
+        self._player_count = NotImplemented
         self._symbol_to_player = NotImplemented
         self._player_to_symbol = NotImplemented
 
     @abstractmethod
-    def validate_player_symbols(self,
-        player_symbols: Sequence[Symbol],
-        player_count: int
+    def validate_player_symbols(self
         ) -> None:
         raise NotImplementedError
 
