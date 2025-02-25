@@ -54,8 +54,9 @@ class GridGameWinChecker(ABC):
         symbol_handler: GridGameSymbolHandler
         ) -> None:
 
-        self._symbol_handler = symbol_handler
-        self._symbol_to_player = symbol_handler.symbol_to_player
+        self._symbol_handler = NotImplemented # symbol_handler
+        self._player_to_symbol = NotImplemented # symbol_handler.player_to_symbol
+        self._symbol_to_player = NotImplemented # symbol_handler.symbol_to_player
 
     @property
     def symbol_handler(self):
