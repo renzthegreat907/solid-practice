@@ -20,7 +20,7 @@ class TicTacToeSymbolHandler(GridGameSymbolHandler):
         player_count: int
         ) -> None:
 
-        self.validate_player_symbols(player_symbols, player_count)
+        self._validate_player_symbols(player_symbols, player_count)
         self._player_symbols = player_symbols
         self._player_count = player_count
 
@@ -33,7 +33,7 @@ class TicTacToeSymbolHandler(GridGameSymbolHandler):
             for k, symbol in self._player_to_symbol.items()
         }
 
-    def validate_player_symbols(self,
+    def _validate_player_symbols(self,
         player_symbols: Sequence[Symbol],
         player_count: int
         ) -> None:
