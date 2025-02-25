@@ -4,9 +4,9 @@ from collections.abc import Iterable
 
 
 # Probably better as `typing.NewType('PlayerId', int)`
-type PlayerId = int
+PlayerId = int
 
-type Symbol = str
+Symbol = str
 
 
 @dataclass(frozen=True)

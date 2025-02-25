@@ -1,9 +1,13 @@
 import argparse
 
-from gridgame.model import GridGameModel
-from gridgame.view import View
-from gridgame.controller import Controller
+from .view import View
+from .controller import Controller
 
+from .model import (
+    GridGameModel,
+    TicTacToeSymbolHandler,
+    TicTacToeWinChecker,
+    )
 
 def str_list(line: str) -> list[str]:
     return line.split(',')
@@ -24,13 +28,21 @@ def setup_parser():
 
 
 def make_model(args: argparse.Namespace):
+
+    size = args.size
+    player_count = args.player_count
+    player_symbols = args.player_symbols
+
     match args.variant:
         case "tictactoe":
-            return GridGameModel(
-                grid_size=args.size,
-                player_count=args.player_count,
-                player_symbols=args.symbols,
-            )
+            # return TicTacToeModel(
+            #     grid_size=args.size,
+            #     player_count=args.player_count,
+            #     player_symbols=args.symbols,
+            # )
+
+            symbol_handler = TicTacToeSymbolHandler(player_symbols, player_count)
+            win_condition = TicTacToeWinChecker(symbol_handler)
 
         case "wild":
             raise NotImplementedError('wild variant is not yet implemented')
@@ -43,6 +55,13 @@ def make_model(args: argparse.Namespace):
 
         case _:
             raise NotImplementedError(f'Variant "{args.variant}" is unknown')
+
+    return GridGameModel(
+        grid_size,
+        player_count,
+        player_symbols,
+        win_condition,
+        symbol_handler)
 
 
 def main():
