@@ -5,8 +5,18 @@ from .controller import Controller
 
 from .model import (
     GridGameModel,
-    TicTacToeSymbolHandler,
+    )
+
+from .tictactoe import (
+    TicTacToeSymbolAndPlayerHandler,
     TicTacToeWinChecker,
+    TicTacToeSettingInitializer,
+    )
+
+from .notakto import (
+    NotaktoSettingInitializer,
+    NotaktoSymbolAndPlayerHandler,
+    NotaktoWinChecker,
     )
 
 def str_list(line: str) -> list[str]:
@@ -31,24 +41,25 @@ def make_model(args: argparse.Namespace):
 
     size = args.size
     player_count = args.player_count
-    player_symbols = args.player_symbols
+    player_symbols = args.symbols
 
     match args.variant:
         case "tictactoe":
-            # return TicTacToeModel(
-            #     grid_size=args.size,
-            #     player_count=args.player_count,
-            #     player_symbols=args.symbols,
-            # )
 
-            symbol_handler = TicTacToeSymbolHandler(player_symbols, player_count)
-            win_condition = TicTacToeWinChecker(symbol_handler)
+            symbol_and_player_handler = TicTacToeSymbolAndPlayerHandler
+            win_checker = TicTacToeWinChecker
+            gamemode = TicTacToeSettingInitializer
+
+        case "notakto":
+            # raise NotImplementedError('notakto variant is not yet implemented')
+            
+            symbol_and_player_handler = NotaktoSymbolAndPlayerHandler
+            win_checker = NotaktoWinChecker
+            gamemode = NotaktoSettingInitializer
+
 
         case "wild":
             raise NotImplementedError('wild variant is not yet implemented')
-
-        case "notakto":
-            raise NotImplementedError('notakto variant is not yet implemented')
 
         case "pick15":
             raise NotImplementedError('pick15 variant is not yet implemented')
@@ -57,11 +68,13 @@ def make_model(args: argparse.Namespace):
             raise NotImplementedError(f'Variant "{args.variant}" is unknown')
 
     return GridGameModel(
-        grid_size,
-        player_count,
+        size,
         player_symbols,
-        win_condition,
-        symbol_handler)
+        player_count,
+        symbol_and_player_handler,
+        win_checker,
+        gamemode
+        )
 
 
 def main():

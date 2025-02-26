@@ -1,42 +1,50 @@
-# from typing import Protocol
 from copy import deepcopy
-# from typing import Tuple
-from typing import Collection, Dict
+from typing import Dict
+
 from .project_types import (
+    Field,
     PlayerId,
     Cell,
     Symbol,
     Feedback,
     )
+
 from collections.abc import Sequence
 from abc import ABC, abstractmethod
 
-from .project_types import PlayerId, Cell, Symbol, Feedback, Field
-
 ####################################################################################################
 ####################################################################################################
 ####################################################################################################
 
-class GridGameSymbolHandler(ABC):
+class GridGameSymbolAndPlayerHandler(ABC):
 
     @abstractmethod
-    def __init__(self) -> None:
+    def __init__(self,
+        player_symbols: Symbol | Sequence[Symbol],
+        player_count: int,
+        ) -> None:
+        self._player_symbol: Symbol = NotImplemented
+        self._player_symbols: Sequence[Symbol] = NotImplemented
+        self._player_count = NotImplemented
         self._symbol_to_player = NotImplemented
         self._player_to_symbol = NotImplemented
 
     @abstractmethod
-    def _validate_player_symbols(self,
-        player_symbols: Sequence[Symbol],
-        player_count: int
+    def validate_player_count(self
+        ) -> None:
+        raise NotImplementedError
+    
+    @abstractmethod
+    def validate_player_symbols(self
         ) -> None:
         raise NotImplementedError
 
     @abstractmethod
-    def place_symbol(self, symbol: Symbol, cell: Cell) -> Feedback:
+    def get_symbol_choices(self, player: PlayerId) -> list[Symbol]:
         raise NotImplementedError
 
     @abstractmethod
-    def get_symbol_choices(self, player: PlayerId) -> list[Symbol]:
+    def inquire_final_cell(self, cell: Cell, field: Field) -> Cell:
         raise NotImplementedError
 
     @property
@@ -45,63 +53,27 @@ class GridGameSymbolHandler(ABC):
 
     @property
     def symbol_to_player(self) -> Dict[Symbol, PlayerId]:
-        return deepcopy(self.symbol_to_player)
+        return deepcopy(self._symbol_to_player)
 
-class TicTacToeSymbolHandler(GridGameSymbolHandler):
+    @property
+    def player_symbol(self) -> Symbol:
+        return deepcopy(self._player_symbol)
 
-    def __init__(self,
-        player_symbols: Sequence[Symbol],
-        player_count: int
-        ) -> None:
+    @property
+    def player_symbols(self) -> Sequence[Symbol]:
+        return deepcopy(self._player_symbols)
 
-        self._validate_player_symbols(player_symbols, player_count)
-        self._player_symbols = player_symbols
-        self._player_count = player_count
+    def next_player(self, current_player: PlayerId) -> PlayerId:
+        return (
+            current_player + 1 if current_player != self._player_count else
+            1
+        )
 
-        self._player_to_symbol: dict[PlayerId, Symbol] = {
-            k: symbol
-            for k, symbol in enumerate(player_symbols, start=1)
-        }
-        self._symbol_to_player: dict[Symbol, PlayerId] = {
-            symbol: k
-            for k, symbol in self._player_to_symbol.items()
-        }
-
-    def _validate_player_symbols(self,
-        player_symbols: Sequence[Symbol],
-        player_count: int
-        ) -> None:
-
-        if player_count <= 1:
-            raise ValueError(
-                f'Must have at least two players (found {player_count})')
-
-        unique_symbols = set(player_symbols)
-
-        if len(unique_symbols) != len(player_symbols):
-            raise ValueError(
-                f'Player symbols must be unique (was {player_symbols}')
-
-        if len(player_symbols) != player_count:
-            raise ValueError(
-                f'Player symbols must be exactly {player_count} (was {player_symbols})')
-
-    def _validate_grid_size(self, grid_size: int) -> None:
-        if grid_size <= 2:
-            raise ValueError(
-                f'Grid size ({grid_size}) is less than 3 for game: tic-tac-toe!')
-
-    def _inquire_final_cell(self,
-        cell: Cell,
-        field: Field
-        ) -> Cell:
-        return cell
-
-    def get_symbol_choices(self, player: PlayerId) -> list[Symbol]:
-        if player not in self._player_to_symbol:
-            raise ValueError(f'Invalid player: {player}')
-
-        return [self._player_to_symbol[player]]
+    def prev_player(self, current_player: PlayerId) -> PlayerId:
+        return (
+            current_player - 1 if current_player != 1 else
+            self._player_count
+        )
 
 ####################################################################################################
 ####################################################################################################
@@ -110,21 +82,22 @@ class TicTacToeSymbolHandler(GridGameSymbolHandler):
 class GridGameWinChecker(ABC):
 
     def __init__(self,
-        symbol_handler: GridGameSymbolHandler
+        symbol_and_player_handler: GridGameSymbolAndPlayerHandler
         ) -> None:
 
-        self._symbol_handler = symbol_handler
-        self._symbol_to_player = symbol_handler.symbol_to_player
+        self._symbol_and_player_handler = symbol_and_player_handler
+        self._player_to_symbol = NotImplemented
+        self._symbol_to_player = NotImplemented
 
     @property
-    def symbol_handler(self):
-        return self._symbol_handler
+    def symbol_and_player_handler(self):
+        return self._symbol_and_player_handler
 
     @abstractmethod
-    def winner(self, field: Field) -> PlayerId | None:
+    def winner(self, field: Field, current_player: PlayerId) -> PlayerId | None:
         raise NotImplementedError
 
-    def _groups(self, field: Field) -> list[list[Cell]]:
+    def _groups(self, field: Field) -> Sequence[list[list[Cell]]]:
 
         row_groups = [
             [Cell(row, k) for k in field.valid_coords]
@@ -144,51 +117,70 @@ class GridGameWinChecker(ABC):
              for k in field.valid_coords],
         ]
 
-        return row_groups + col_groups + diagonals
+        return row_groups, col_groups, diagonals
 
-class TicTacToeWinChecker(GridGameWinChecker):
+####################################################################################################
+####################################################################################################
+####################################################################################################
 
-    def winner(self, field: Field) -> PlayerId | None:
+class GridGameSettingInitializer(ABC):
 
-        for group in self._groups:
-            if (basis := field.get_symbol_at(group[0])) is not None and \
-                    field.are_all_equal_to_basis(basis, group):
-                winner = self._symbol_to_player.get(basis)
-                assert winner is not None, \
-                    f'Winning symbol {basis} in cell group {groups} has no associated player'
+    @abstractmethod
+    def __init__(self,
+        win_checker: GridGameWinChecker) -> None:
+        self._win_checker = NotImplemented
 
-                return winner
+    @property
+    def win_checker(self) -> GridGameWinChecker:
+        return self._win_checker
 
+    @abstractmethod
+    def validate_grid_size(self, grid_size: int) -> None:
+        raise NotImplementedError
+
+####################################################################################################
+####################################################################################################
 ####################################################################################################
 
 class GridGameModel:
 
-    @abstractmethod
-    def _validate_grid_size(self, grid_size: int) -> None:
-        raise NotImplementedError
-
-    @abstractmethod
     def __init__(self,
         grid_size: int,
         player_symbols: Sequence[Symbol],
         player_count: int,
-        win_checker: GridGameWinChecker,
+        symbol_and_player_handler: type[GridGameSymbolAndPlayerHandler],
+        win_checker: type[GridGameWinChecker],
+        setting_initializer: type[GridGameSettingInitializer],
         ) -> None:
 
         self._field = Field(grid_size)
         self._player_count = player_count
         self._current_player: PlayerId = 1
-        self._player_symbols: Symbol | Sequence[Symbol]
-        self._win_checker: GridGameWinChecker = win_checker
-        self._symbol_handler: GridGameSymbolHandler = win_checker.symbol_handler
+        self._player_symbols: Symbol | Sequence[Symbol] = player_symbols
 
-        self._validate_player_existence()
-        # self._validate_win_checker_containing_same_symbol_handler(self._win_checker, self._symbol_handler)
-        # self._validate_grid_size(grid_size)
-        # self._symbol_handler._validate_player_symbols(player_symbols, player_count)
+        # self._symbol_and_player_handler: GridGameSymbolAndPlayerHandler = self._win_checker.symbol_and_player_handler
+        # self._win_checker: GridGameWinChecker = self._setting_initializer.win_checker
+        # self._setting_initializer: GridGameSettingInitializer = setting_initializer
+
+        self._symbol_and_player_handler = symbol_and_player_handler(
+            player_symbols=player_symbols,
+            player_count=player_count,
+            )
+
+        self._win_checker = win_checker(
+            self._symbol_and_player_handler
+            )
+
+        self._setting_initializer = setting_initializer(
+            self._win_checker
+            )
+
+        self._validate_player_count()
+        self._validate_player_symbols()
+        self._validate_grid_size()
 
     def get_symbol_choices(self, player: PlayerId) -> list[Symbol]:
-        return self._symbol_handler.get_symbol_choices(player)
+        return self._symbol_and_player_handler.get_symbol_choices(player)
 
     def place_symbol(self,
         symbol: Symbol,
@@ -197,7 +189,7 @@ class GridGameModel:
         if self.is_game_over:
             return Feedback.GAME_OVER
 
-        if symbol not in self._symbol_handler.get_symbol_choices(self.current_player):
+        if symbol not in self._symbol_and_player_handler.get_symbol_choices(self.current_player):
             return Feedback.INVALID_SYMBOL
 
         if not self._field.is_within_bounds(cell):
@@ -208,42 +200,67 @@ class GridGameModel:
 
         # when guaranteed the cell is selectable,
         # symbol stays the same, but cell may not.
-        final_cell = _symbol_handler._inquire_final_cell(cell, self._field)
+        final_cell = self._symbol_and_player_handler.inquire_final_cell(cell, self._field)
 
         self._field.place_symbol(symbol, final_cell)
         self._switch_to_next_player()
 
         return Feedback.VALID
 
+    def _validate_player_symbols(self) -> None:
+        self._symbol_and_player_handler.validate_player_symbols()
+
+    def _validate_grid_size(self) -> None:
+        # General
+        if not (grid_size := self.grid_size) >= 2:
+            raise ValueError(
+                f'Grid games should have grid size greater than 3! (currently {grid_size})')
+        # Game specific
+        self._setting_initializer.validate_grid_size(self.grid_size)
+
     @property
     def winner(self) -> PlayerId | None:
-        return self._win_checker.winner(self._field)
+        return self._win_checker.winner(self._field, self._current_player)
 
-    def _validate_player_existence(self) -> None:
-        if (player_count := self.player_count) <= 0:
+    """
+    what are the baseline factors needed to determine a winner?
+    you can look at:
+    - the field
+        to know if a line is completed? ALWAYS
+        to know what block has finished/completed a line? NOT ALWAYS !!!
+            case for notakto and pick15:
+                you cannot look at JUST the field to know who won
+                because blocks belong to everyone.
+    - the current player !!!
+        to know who was playing when the game finished? ALWAYS
+            but depending on the game, it may be:
+                the one who recently placed; or
+                the one who placed previously
+
+    overall, winner needs access to:
+        the field
+        the current player(id)
+        the ability to know who was the PREVIOUS player
+
+    recall the hierarchy of inheritance:
+        symbol handler
+        win checker
+        setting initializer
+        game model
+
+    therefore, the "player cycler" cannot be in the actual game model
+    it must be at least in the symbol handler
+
+    in this line of thought, symbol handler now becomes symbol-player handler
+    """
+
+    def _validate_player_count(self) -> None:
+        # General
+        if self.player_count < 1:
             raise ValueError(
-                f'Player count cannot be negative! (currently {player_count})')
-
-    def _initialize_common_actions(self,
-        grid_size: int,
-        player_symbols: Symbol | Sequence[Symbol],
-        player_count: int) -> tuple[
-            Field,
-            int,
-            PlayerId
-        ]:
-        _field = Field(grid_size)
-        _player_count = player_count
-        _current_player: PlayerId = 1
-        self._validate_player_existence()
-        self._validate_grid_size(grid_size)
-        self._validate_player_symbols(player_symbols, player_count)
-
-        return (
-            _field,
-            _player_count,
-            _current_player
-            )
+                f'Player count must be a positive integer! (currently {self.player_count})')
+        # Game specific
+        self._symbol_and_player_handler.validate_player_count()
 
     @property
     def occupied_cells(self) -> dict[Cell, Symbol]:
@@ -270,10 +287,12 @@ class GridGameModel:
 
     @property
     def next_player(self) -> PlayerId:
-        return (
-            self.current_player + 1 if self.current_player != self.player_count else
-            1
-        )
+        return self._symbol_and_player_handler.next_player(self.current_player)
 
     def _switch_to_next_player(self):
         self._current_player = self.next_player
+
+
+####################################################################################################
+####################################################################################################
+####################################################################################################

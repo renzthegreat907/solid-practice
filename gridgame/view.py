@@ -64,5 +64,6 @@ class View:
     def print_error_invalid_symbol(self) -> None:
         print('Invalid symbol. Please try again.')
 
-    def print_winner(self, winner: PlayerId) -> None:
-        print(f'Player {winner} wins!')
+    def print_winner(self, winner: PlayerId | None) -> None:
+        if winner is not None: print(f'Player {winner} wins!')
+        else: print(f'No one won!')

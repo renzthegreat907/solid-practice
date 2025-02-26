@@ -45,7 +45,5 @@ class Controller:
 
                 view.print_divider()
 
-        assert model.winner is not None
-
         view.print_board(model.grid_size, model.occupied_cells)
         view.print_winner(model.winner)
